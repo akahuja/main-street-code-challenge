@@ -1,8 +1,12 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, except: [:index, :create, :new]
+  before_action :set_company, except: %i[index create new]
 
   def index
     @companies = Company.all
+
+    if params[:name]
+      @companies = @companies.where(['name like ?', '%' + params[:name] + '%'])
+    end
   end
 
   def new
@@ -15,8 +19,9 @@ class CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
     if @company.save
-      redirect_to companies_path, notice: "Saved"
+      redirect_to companies_path, notice: "Company details saved successfully!"
     else
+      flash[:alert] = @company.errors.full_messages.to_sentence
       render :new
     end
   end
@@ -26,11 +31,22 @@ class CompaniesController < ApplicationController
 
   def update
     if @company.update(company_params)
-      redirect_to companies_path, notice: "Changes Saved"
+      redirect_to companies_path, notice: "Company details updated successfully!"
     else
+      flash[:alert] = @company.errors.full_messages.to_sentence
       render :edit
     end
-  end  
+  end
+
+  def destroy
+    if @company.destroy
+      flash[:notice] = 'The company has been deleted successfully!'
+    else
+      flash[:alert] = 'Error! unable to delete the company at the moment. Please try again later!'
+    end
+
+    redirect_to companies_path
+  end
 
   private
 
@@ -43,12 +59,12 @@ class CompaniesController < ApplicationController
       :phone,
       :email,
       :owner_id,
+      :brand_color,
       services: []
     )
   end
 
   def set_company
-    @company = Company.find(params[:id])
+    @company = Company.find_by(id: params[:id])
   end
-  
 end

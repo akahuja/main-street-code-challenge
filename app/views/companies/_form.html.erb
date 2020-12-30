@@ -1,5 +1,6 @@
+
 <div class="py-5">
-  <%= form_for @company do |f| %>
+  <%= form_for @company, html: { id: 'company-form' } do |f| %>
 
     <div class="row my-lg-3">
       <div class="col-lg-3">
@@ -35,6 +36,16 @@
       </div>
     </div>
 
+    <div class="row my-lg-3">
+      <div class="col-lg-3">
+        <label><strong>Brand Color</strong><br><small class="text-muted">Shown in marketing</small></label>
+      </div>
+      <div class="col-lg offset-lg-1">
+        <div class="form-group">
+          <%= f.color_field :brand_color, value: @company.brand_color, class: "form-control"%>
+        </div>
+      </div>
+    </div>
 
     <div class="row my-lg-3">
       <div class="col-lg-3">
@@ -53,7 +64,8 @@
       </div>
       <div class="col-lg offset-lg-1">
         <div class="form-group">
-          <%= f.text_field :email, class: "form-control", placeholder: "hello@company.com"%>
+          <%= f.text_field :email, class: 'form-control', id: 'text-email', placeholder: 'hello@getmainstreet.com' %>
+          <span id="email-field-error"></span>
         </div>
       </div>
     </div>
@@ -72,9 +84,27 @@
     <div class="row my-lg-3">
       <div class="col">
         <div class="form-group">
-          <%= f.submit class: "btn btn-success"%>
+          <%= f.submit class: "btn btn-success", id: 'company-submit-button', data: { disable_with: false }%>
         </div>
       </div>
     </div>
   <% end %>
 </div>
+
+<script type="text/javascript">
+  $('body').on('click', '#company-submit-button', function(e) {
+    var email_field  = $('#company-form').find('#text-email');
+
+    // validate email format only if email field is present,
+    // as email field is not mandatory
+    if (email_field.val().length > 0) {
+      var email_regex = new RegExp(/\A[^@\s]+@getmainstreet.com/i)
+      if (!email_field.val().match(email_regex)) {
+        alert( "Email must be a @getmainstreet.com domain based email" );
+        return
+      }
+    }
+    $('#company-form').submit();
+    event.preventDefault();
+  });
+</script>

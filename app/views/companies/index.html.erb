@@ -1,15 +1,53 @@
 <div class="container py-5">
-  <h3>Companies</h3>
-  <%= link_to "+ Create a Company", new_company_path %><br>
+  <h3 class="mb-3 border-bottom pb-3">Companies</h3>
+  <%= link_to "Create a Company", new_company_path, class: 'btn btn-primary btn-sm'%><br>
   <% if @companies.empty? %>
   <p>No Companies Found</p>
   <% else %>
-    <ul class="list-group my-5">
-      <% @companies.each do |company| %>
-        <a href="<%= company_path(company) %>" class="list-group-item list-group-item-action">
-          <%= company.name %>
-        </a>
-      <% end %>
-    </ul>
+    <!-- Search form starts -->
+      <div class="text-right mb-3">
+        <form url='/companies', method='get', class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2" id="search-form">
+          <div class="md-form active-cyan active-cyan-2 mb-3 w-75">
+            <input name="name" class="form-control" type="text" placeholder="Search with company name" aria-label="Search">
+          </div>
+         <!--  <input name="email" class="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search"
+            aria-label="Search" id="search-field"> -->
+        </form>
+      </div>
+      <!-- Search form ends -->
+      <table
+        class='table table-striped'
+        id="companies-table"
+        >
+        <thead>
+          <tr>
+            <th>Company Name</th>
+            <th>Services</th>
+            <th>Zipcode</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="table-body">
+          <% @companies.each do |company| %>
+            <tr>
+              <td>
+                <%= link_to company.name, company_path(company) %>
+              </td>
+              <td>
+                <% company.services.each do |service| %>
+                  <%= service.to_s.titleize %><br>
+                <% end %>
+              </td>
+              <td><%= company.zip_code %></td>
+              <td class="links-with-space">
+                <%= link_to 'Show', company_path(company.id), class: 'btn btn-sm btn-primary' %>
+                <%= link_to 'Edit', edit_company_path(company.id), class: 'btn btn-sm btn-primary' %>
+                <%= link_to 'Destroy', company_path(company.id), data: {confirm: 'Are you sure?'}, method: :delete, class: 'btn btn-sm btn-danger' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
   <% end %>
 </div>
